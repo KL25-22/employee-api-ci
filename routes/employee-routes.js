@@ -6,9 +6,9 @@ var empSvc = new EmployeeService();
 //GET http://localhost:5000/employees
 
 //get all emp
-router.get("/", async (req, res) => {
+router.get("/demo", async (req, res) => {
     let emps = await empSvc.getAllEmployees()
-        .catch(err => res.status(500).json({ 'Message': 'Unable to read employee' }));
+        .catch(err => res.status(500).json({ 'data': 'Sample data from demo' }));
     if (emps) {
         res.status(200).json(emps);
     }
