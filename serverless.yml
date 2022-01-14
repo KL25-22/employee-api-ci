@@ -1,0 +1,53 @@
+service: aws-sls-employee-api
+frameworkVersion: '2 || 3'
+
+custom:
+  tableName: 'EmployeesData'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  lambdaHashingVersion: '20201221'
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - Fn::GetAtt: [ EmployeeTable, Arn ]
+  environment:
+    TABLENAME: ${self:custom.tableName}
+    NODE_ENV: 'production'
+    REGION : 'us-west-2'
+
+functions:
+  employee-api:
+    handler: handler.handler
+    layers: 
+      - arn:aws:lambda:us-west-2:067614901060:layer:Express-Dynamo-Sdk:1
+    events:
+      - httpApi: '*'
+
+resources:
+  Resources:
+    EmployeeTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: LocationId
+            AttributeType: S
+          - AttributeName: EmployeeId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: LocationId
+            KeyType: HASH
+          - AttributeName: EmployeeId
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
+        TableName: ${self:custom.tableName}
