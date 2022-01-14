@@ -8,7 +8,7 @@ var empSvc = new EmployeeService();
 //get all emp
 router.get("/demo", async (req, res) => {
     let emps = await empSvc.getAllEmployees()
-        .catch(err => res.status(500).json({ 'data': 'Sample data from demo' }));
+        .catch(err => res.status(500).json({ 'data-1': 'Sample data from demo' }));
     if (emps) {
         res.status(200).json(emps);
     }
